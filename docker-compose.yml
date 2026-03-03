@@ -1,0 +1,47 @@
+version: '3.8'
+services:
+  item-service:
+    build: ./item-service/item-service
+    container_name: item-service
+    environment:
+      - SERVER_PORT=8081  # <--- Forces Spring Boot to use 8081
+    ports:
+      - "8081:8081"
+    networks:
+      - microservices-net
+      
+  order-service:
+    build: ./order-service/order-service
+    container_name: order-service
+    environment:
+      - SERVER_PORT=8082  # <--- Forces Spring Boot to use 8082
+    ports:
+      - "8082:8082"
+    networks:
+      - microservices-net
+      
+  payment-service:
+    build: ./payment-service/payment-service
+    container_name: payment-service
+    environment:
+      - SERVER_PORT=8083  # <--- Forces Spring Boot to use 8083
+    ports:
+      - "8083:8083"
+    networks:
+      - microservices-net
+      
+  api-gateway:
+    build: ./api-gateway-service/api-gateway-service
+    container_name: api-gateway
+    ports:
+      - "9090:8080"
+    depends_on:
+      - item-service
+      - order-service
+      - payment-service
+    networks:
+      - microservices-net
+
+networks:
+  microservices-net:
+    driver: bridge
